@@ -1,4 +1,5 @@
-pushd frontend
+pushd ..\frontend
 call npm run build
 popd
-copy .\frontend\dist\index.html .\src\index.html
+copy ..\frontend\dist\index.html .\src\index.html
+clasp push

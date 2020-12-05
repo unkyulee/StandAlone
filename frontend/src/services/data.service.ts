@@ -1,8 +1,35 @@
+/* */
 export default {
-  async get(table, filter?) {
-    return db[table];
+  async get(table, filter?, page?, size?) {
+    // run google script
+    let response = await this.run({
+      table,
+      filter,
+      page,
+      size,
+    });
+    return response;
+  },
+
+  run(params) {
+    return new Promise((res) =>
+      google.script.run.withSuccessHandler((data) => res(data))["search"](params)
+    );
   },
 };
+
+/*
+// TEST function
+export default {
+  async get(table, filter?) {
+    return {
+      total: 10,
+      size: 10,
+      data: db[table],
+    };
+  },
+};
+
 
 let db = {
 	App: [
@@ -42,3 +69,5 @@ let db = {
 	  },
 	],
   };
+
+*/

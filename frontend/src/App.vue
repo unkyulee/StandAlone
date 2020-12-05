@@ -45,14 +45,14 @@ export default Vue.extend({
   mounted: async function () {
     // load app config
     let app = await data.get("App");
-    if (app && app.length > 0) {
-      app = app[0];
+    if (app && app.data && app.data.length > 0) {
+      app = app.data[0];
       for (let key of Object.keys(app)) config.set(key, app[key]);
     }
 
     // load navigation from data base
     const nav = await data.get("Navigation");
-    config.set("nav", nav);
+    config.set("nav", nav.data);
     setTimeout(() => event.send({ name: "nav-loaded" }));
 
     // load the first navigation
