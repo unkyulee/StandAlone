@@ -1,8 +1,8 @@
 // return Vue frontend
 function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile("src/index").setXFrameOptionsMode(
-    HtmlService.XFrameOptionsMode.ALLOWALL
-  );
+  return HtmlService.createHtmlOutputFromFile("src/index")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
 
 // Database
@@ -22,7 +22,7 @@ function connectDB() {
     );
     if (db.hasNext()) {
       db = db.next();
-      
+
       // Puts the value 'bar' into the cache using the key 'foo'
       return SpreadsheetApp.open(db);
     }
@@ -32,24 +32,29 @@ function connectDB() {
 // Read Database
 function search(params) {
   var rows = [];
-  
+
   // params - table, filter, page, size
   let db = connectDB();
   var sheet = db.getSheetByName(params.table);
-  if(sheet) {
+  if (sheet) {
     var data = sheet.getDataRange().getValues();
-    var headers = data[0];    
-  
+    var headers = data[0];
+    var filter = params.filter;
+    if (filter) filter = eval(filter);
+
     // convert to rows
     for (var i = 1; i < data.length; i++) {
       let row = {};
       //
       for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];
-      if (params.filter && !eval(params.filter)) continue;  
+
+      // filter
+      if (filter && !filter(row)) continue;
+
       //
       rows.push(row);
     }
-  }  
+  }
 
   return {
     data: rows,

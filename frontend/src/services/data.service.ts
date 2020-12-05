@@ -1,6 +1,13 @@
 /* */
+let _data_ = {};
+
 export default {
   async get(table, filter?, page?, size?) {
+
+	// check cache
+	let key = `${table}_${filter}_${page}_${size}`;
+	if(_data_[key]) return _data_[key];
+	
     // run google script
     let response = await this.run({
       table,
@@ -8,6 +15,8 @@ export default {
       page,
       size,
 	});
+	// save cache
+	_data_[key] = response;
 
 	return response;
   },
