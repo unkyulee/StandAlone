@@ -32,10 +32,8 @@
 </template>
 
 <script>
-import Base from "./Base";
-
 export default {
-  extends: Base,
+  inject: ["data", "config", "event"],
   data: function () {
     return {
       drawer: false,
@@ -50,15 +48,12 @@ export default {
       this.drawer = !this.drawer;
     });
 
-    // subscribe to data-change event
-    this.event.subscribe("Navigation", "nav-loaded", (event) => {
-      this.navigations = this.config
-        .get("nav", [])
-        .filter((x) => x.type != "hidden");
+    this.navigations = this.config
+      .get("nav", [])
+      .filter((x) => x.type != "hidden");
 
-      // load title
-      this.title = this.config.get("name", "");
-    });
+    // load title
+    this.title = this.config.get("name", "");
   },
   destroyed: function () {
     this.event.unsubscribe_all("Navigation");
