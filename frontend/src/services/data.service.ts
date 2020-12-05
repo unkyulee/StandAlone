@@ -7,8 +7,9 @@ export default {
       filter,
       page,
       size,
-    });
-    return response;
+	});
+
+	return response;
   },
 
   run(params) {
@@ -29,7 +30,6 @@ export default {
     };
   },
 };
-
 
 let db = {
 	App: [

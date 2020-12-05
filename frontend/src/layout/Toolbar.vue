@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app dense flat :dark="toolbar.dark" :color="toolbar.color">
+  <v-app-bar app dense flat :dark="toolbar.dark == 1 ? true: false" :color="toolbar.color">
     <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
     <v-toolbar-title>{{ title }}</v-toolbar-title>
     <v-spacer></v-spacer>
