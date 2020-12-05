@@ -43,8 +43,20 @@ export default Vue.extend({
     };
   },
   mounted: async function () {
+    // load app config
+    let app = await data.get("App");
+    if (app && app.length > 0) {
+      app = app[0];
+      for (let key of Object.keys(app)) config.set(key, app[key]);
+    }
+
+    // load navigation from data base
+    const nav = await data.get("Navigation");
+    config.set("nav", nav);
+    setTimeout(() => event.send({ name: "nav-loaded" }));
+
     // load the first navigation
-    if (this.$route.path == "/" && config.get("nav", []).length > 0) {
+    if (this.$route.path != "/" && config.get("nav", []).length > 0) {
       this.$router.push(config.get("nav.0.url"));
     }
     // other-wise load the selected navigation
@@ -55,7 +67,7 @@ export default Vue.extend({
   watch: {
     // react to route changes...
     async $route(to, from) {
-      this.load(to.path)
+      this.load(to.path);
     },
   },
   methods: {

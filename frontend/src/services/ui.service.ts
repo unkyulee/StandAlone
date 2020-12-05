@@ -8,7 +8,6 @@ export default {
 			// register the component
 			try {
 				Vue.component(c._id, eval(c.component));
-				console.log(`registered ${c._id}`);
 			} catch (ex) {
 				console.log(c);
 				console.error(ex);

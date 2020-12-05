@@ -50,15 +50,15 @@ export default {
       this.drawer = !this.drawer;
     });
 
-    // load navigation from data base
-    const nav = await this.data.get("Navigation");
-    this.config.set("nav", nav);
+    // subscribe to data-change event
+    this.event.subscribe("Navigation", "nav-loaded", (event) => {
+      this.navigations = this.config
+        .get("nav", [])
+        .filter((x) => x.type != "hidden");
 
-    // load title
-    this.title = this.config.get("name", "");
-    this.navigations = this.config
-      .get("nav", [])
-      .filter((x) => x.type != "hidden");
+      // load title
+      this.title = this.config.get("name", "");
+    });
   },
   destroyed: function () {
     this.event.unsubscribe_all("Navigation");
