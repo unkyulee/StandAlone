@@ -9,7 +9,7 @@ export default {
 	if(_data_[key]) return _data_[key];
 	
     // run google script
-    let response = await this.run({
+    let response = await this.run("search", {
       table,
       filter,
       page,
@@ -21,9 +21,19 @@ export default {
 	return response;
   },
 
-  run(params) {
+  async set(table, data) {
+    // run google script
+    let response = await this.run("upsert", {
+      table,
+      data
+	});
+
+	return response;
+  },
+
+  run(fn, params) {
     return new Promise((res) =>
-      google.script.run.withSuccessHandler((data) => res(data))["search"](params)
+      google.script.run.withSuccessHandler((data) => res(data))[fn](params)
     );
   },
 };

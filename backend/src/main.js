@@ -44,7 +44,9 @@ function search(params) {
 
     // convert to rows
     for (var i = 1; i < data.length; i++) {
-      let row = {};
+      let row = {
+        _ROW_: i + 1,
+      };
       //
       for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];
 
@@ -59,4 +61,79 @@ function search(params) {
   return {
     data: rows,
   };
+}
+
+// Upsert
+function upsert(params) {
+  try {
+    // Lock
+    var lock = LockService.getPublicLock();
+    lock.waitLock(30000);
+
+    // Connect to DB
+    // params - table, filter, page, size
+    let db = connectDB();
+    var sheet = db.getSheetByName(params.table);
+    if (sheet) {
+      // header is in row 1
+      var headers = sheet
+        .getRange(1, 1, 1, sheet.getLastColumn())
+        .getValues()[0];
+
+      // decide to update or append
+      var nextRow;
+      var row = [];
+
+      if (params.data._ROW_ && params.data._ROW_ != 1) {
+        ///////////////////////
+        // UPDATE
+        ///////////////////////
+        nextRow = params.data._ROW_;
+
+        // loop through the header columns
+        for (i in headers) {
+          let value = params.data[headers[i]];
+          // else use header name to get data
+          row.push(value);
+
+          // update the cell
+          if (value) sheet.getRange(nextRow, parseInt(i) + 1).setValue(value);
+        }
+      } else {
+        ///////////////////////
+        // INSERT
+        ///////////////////////
+        nextRow = sheet.getLastRow() + 1; // get next row
+
+        // loop through the header columns
+        for (i in headers) {
+          // else use header name to get data
+          row.push(params.data[headers[i]]);
+        }
+
+        // append row
+        sheet.getRange(nextRow, 1, 1, row.length).setValues([row]);
+      }
+
+      // return row number
+      return {
+        _ROW_: nextRow,
+        row,
+      };
+    }
+  } catch (ex) {
+    throw ex;
+  } finally {
+    // Release Lock
+    lock.releaseLock();
+  }
+}
+
+// send email
+function sendEmail(params) {
+  MailApp.sendEmail(
+    params.recipients,
+    params.subject,
+    params.body
+  );
 }
