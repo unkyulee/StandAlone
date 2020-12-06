@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <Navigation />
-    <Toolbar />
+    <Navigation v-if="navigation" />
+    <Toolbar v-if="toolbar" />
 
     <v-main>
       <component :is="component"> </component>
@@ -40,9 +40,17 @@ export default Vue.extend({
   data: function () {
     return {
       component: null,
+      toolbar: false,
+      navigation: false,
     };
   },
   mounted: async function () {
+    // check toolbar
+    if(config.get('toolbar') != 0) this.toolbar = true;
+    
+    // check navigation
+    if(config.get('navigation') != 0) this.navigation = true;
+
     // load the first navigation
     if (this.$route.path != "/" && config.get("nav", []).length > 0) {
       this.$router.push(config.get("nav.0.url"));

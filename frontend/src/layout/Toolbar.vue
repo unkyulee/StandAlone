@@ -1,6 +1,5 @@
 <template>
   <v-app-bar
-    v-if="title"
     app
     dense
     flat
