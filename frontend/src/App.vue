@@ -19,6 +19,7 @@ import moment from "moment";
 import data from "./services/data.service";
 import config from "./services/config.service";
 import event from "./services/event.service";
+import auth from "./services/auth.service";
 
 // layout
 import Navigation from "./layout/Navigation.vue";
@@ -35,6 +36,7 @@ export default Vue.extend({
       data,
       config,
       event,
+      auth,
     };
   },
   data: function () {
@@ -45,20 +47,21 @@ export default Vue.extend({
     };
   },
   mounted: async function () {
-    // check toolbar
-    if(config.get('toolbar') != 0) this.toolbar = true;
-    
-    // check navigation
-    if(config.get('navigation') != 0) this.navigation = true;
+    // check if requires login
+    if (config.get("login") && !auth.isAuthenticated()) {
+      this.component = config.get("login");
+      // subscribe to login-success event
+      event.subscribe(this._uid, "login-success", async (event) => {
+        await this.init();
+      });
+    } else {
+      await this.init();
+    }
 
-    // load the first navigation
-    if (this.$route.path != "/" && config.get("nav", []).length > 0) {
-      this.$router.push(config.get("nav.0.url"));
-    }
-    // other-wise load the selected navigation
-    else {
-      await this.load(this.$route.path);
-    }
+    //
+  },
+  destroyed: function () {
+    event.unsubscribe_all(this._uid);
   },
   watch: {
     // react to route changes...
@@ -67,7 +70,23 @@ export default Vue.extend({
     },
   },
   methods: {
-    load: function (url) {
+    async init() {
+      // check toolbar
+      if (config.get("toolbar") != 0) this.toolbar = true;
+
+      // check navigation
+      if (config.get("navigation") != 0) this.navigation = true;
+
+      // load the first navigation
+      if (this.$route.path != "/" && config.get("nav", []).length > 0) {
+        this.$router.push(config.get("nav.0.url"));
+      }
+      // other-wise load the selected navigation
+      else {
+        await this.load(this.$route.path);
+      }
+    },
+    load(url) {
       // find the matching nav
       const nav = config.get("nav", []);
       const matchingNav = nav.find((x) => x.url == url);

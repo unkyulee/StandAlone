@@ -9,7 +9,7 @@ export default {
   loadApp() {
     window.app = obj.get(window.params, "parameter.app");
     window.app = this.safeStr(window.app);
-    if (!window.app) window.app = "default";
-    console.log(window.app)
+    if (!window.app) window.app = "default";    
+    console.log(window.app);
   },
 };

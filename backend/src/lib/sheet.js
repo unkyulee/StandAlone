@@ -1,5 +1,12 @@
 // Database
 function connectDB() {
+  // check cache
+  var cache = CacheService.getScriptCache();
+  var cached = cache.get("db");
+  if (cached != null) {    
+    return SpreadsheetApp.openById(cached);
+  }
+
   // locate current direction
   var scriptId = ScriptApp.getScriptId();
   var file = DriveApp.getFileById(scriptId);
@@ -15,6 +22,9 @@ function connectDB() {
     );
     if (db.hasNext()) {
       db = db.next();
+
+      // save to cache file id
+      cache.put("db", db.getId())
 
       // Puts the value 'bar' into the cache using the key 'foo'
       return SpreadsheetApp.open(db);
@@ -41,17 +51,27 @@ function search(params) {
         _ROW_: i + 1,
       };
       //
-      for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];
+      for (let j = 0; j < headers.length; j++) {        
+        // form a dictionary
+        row[headers[j]] = data[i][j];
+      }
 
       // filter      
       if (filter && !filter(row)) continue;
+
+      // remove sensitive
+      if(params.sensitive) {
+        for(let key of Object.keys(params.sensitive)) 
+          delete row[key];        
+      }      
 
       //
       rows.push(row);
     }
   }
-
+  
   return {
+    params,
     data: rows,
   };
 }

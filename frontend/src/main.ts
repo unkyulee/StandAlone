@@ -45,7 +45,7 @@ window.app_init = async () => {
     // load app config
     let app = await data.get(
       "App",
-      `(x) => x.app_id == '${window.app}' || x.app_id == 'default' `
+      `(x) => x.app_id == '${window.app}'`
     );
     if (app && app.data && app.data.length > 0) {
       app = app.data[0];
@@ -55,7 +55,7 @@ window.app_init = async () => {
     // load navigation from data base
     const nav = await data.get(
       "Navigation",
-      `(x) => x.app_id == '${window.app}'  || x.app_id == 'default'`
+      `(x) => x.app_id == '${window.app}'`
     );
     config.set("nav", nav.data);
 

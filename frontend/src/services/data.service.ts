@@ -2,33 +2,33 @@
 let _data_ = {};
 
 export default {
-  async get(table, filter?, page?, size?) {
+  async get(table, filter?, option?) {
+    if (!option) option = {};
 
-	// check cache
-	let key = `${table}_${filter}_${page}_${size}`;
-	if(_data_[key]) return _data_[key];
-	
+    // check cache
+    let key = `${table}_${filter}_${JSON.stringify(option)}`;
+    if (_data_[key]) return _data_[key];
+
     // run google script
     let response = await this.run("search", {
       table,
       filter,
-      page,
-      size,
-	});
-	// save cache
-	_data_[key] = response;
+      ...option,
+    });
+    // save cache
+    _data_[key] = response;
 
-	return response;
+    return response;
   },
 
   async set(table, data) {
     // run google script
     let response = await this.run("upsert", {
       table,
-      data
-	});
+      data,
+    });
 
-	return response;
+    return response;
   },
 
   run(fn, params) {
