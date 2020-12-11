@@ -26,7 +26,7 @@ export default {
     let response = await this.run("upsert", {
       table,
       data,
-    });
+    });   
 
     return response;
   },

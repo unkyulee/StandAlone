@@ -12,4 +12,7 @@ export default {
     if (!window.app) window.app = "default";    
     console.log(window.app);
   },
+  generateId() {
+    return parseInt(`${new Date().getTime() / 100 % 10000000}`);
+  }
 };

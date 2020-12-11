@@ -30,6 +30,16 @@ export default {
     this.toolbar.dark = this.config.get("dark", false);
     this.toolbar.color = this.config.get("color");
   },
+  watch: {
+    // react to route changes...
+    async $route(to, from) {
+      // find the matching nav
+      const nav = this.config.get("nav", []);
+      const matchingNav = nav.find((x) => x.url == to.path);
+      // udpate ui
+      if (matchingNav) this.title = matchingNav.name;      
+    },
+  },
   methods: {
     toggleDrawer() {
       this.event.send({ name: "toggle-drawer" });

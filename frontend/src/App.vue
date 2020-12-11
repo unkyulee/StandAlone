@@ -20,6 +20,7 @@ import data from "./services/data.service";
 import config from "./services/config.service";
 import event from "./services/event.service";
 import auth from "./services/auth.service";
+import util from "./services/util.service";
 
 // layout
 import Navigation from "./layout/Navigation.vue";
@@ -37,6 +38,7 @@ export default Vue.extend({
       config,
       event,
       auth,
+      util,
     };
   },
   data: function () {
@@ -91,9 +93,7 @@ export default Vue.extend({
       const nav = config.get("nav", []);
       const matchingNav = nav.find((x) => x.url == url);
       // udpate ui
-      if (matchingNav) {
-        this.component = matchingNav.component;
-      }
+      if (matchingNav) this.component = matchingNav.component;      
     },
   },
 });
