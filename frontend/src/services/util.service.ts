@@ -14,5 +14,12 @@ export default {
   },
   generateId() {
     return parseInt(`${new Date().getTime() / 100 % 10000000}`);
+  },
+  get(data, path, def) {
+    return obj.get(data, path, def);
+  },
+  set(data, path, value) {
+    return obj.set(data, path, value);
   }
+
 };
