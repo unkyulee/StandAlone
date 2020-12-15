@@ -2,7 +2,7 @@
   <v-app>
     <Navigation v-if="navigation" />
     <Toolbar v-if="toolbar" />
-
+    <Snackbar />
     <v-main>
       <component :is="component"> </component>
     </v-main>
@@ -25,12 +25,14 @@ import util from "./services/util.service";
 // layout
 import Navigation from "./layout/Navigation.vue";
 import Toolbar from "./layout/Toolbar.vue";
+import Snackbar from "./layout/Snackbar.vue";
 
 export default Vue.extend({
   name: "app",
   components: {
     Toolbar,
     Navigation,
+    Snackbar
   },
   provide: function () {
     return {

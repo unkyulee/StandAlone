@@ -60,10 +60,10 @@ function search(params) {
       if (filter && !filter(row)) continue;
 
       // remove sensitive
-      if(params.sensitive) {
+      if(params.sensitive) 
         for(let key of Object.keys(params.sensitive)) 
-          delete row[key];        
-      }      
+          delete row[key];       
+      
 
       //
       rows.push(row);
