@@ -41,10 +41,16 @@ window.app_init = async () => {
 
 async function registerComponents() {
   // register ui components
-  let components = await data.get(
-    "UI",
-    `(x) => x.app_id == '${window.app}' || x.app_id == 'common'`
-  );
+  let components = await data.get("UI", {
+    filter: {
+      app_id: [
+        {
+          type: "match",
+          value: window.app,
+        },        
+      ],
+    },
+  });
   for (let c of components.data) {
     // register the component
     try {
@@ -58,7 +64,16 @@ async function registerComponents() {
 
 async function loadAppConfig() {
   // load app config
-  let app = await data.get("App", `(x) => x.app_id == '${window.app}'`);
+  let app = await data.get("App", {
+    filter: {
+      app_id: [
+        {
+          type: "match",
+          value: window.app,
+        },
+      ],
+    },
+  });
   if (app && app.data && app.data.length > 0) {
     app = app.data[0];
     for (let key of Object.keys(app)) config.set(key, app[key]);
@@ -67,9 +82,15 @@ async function loadAppConfig() {
 
 async function loadNav() {
   // load navigation from data base
-  const nav = await data.get(
-    "Navigation",
-    `(x) => x.app_id == '${window.app}'`
-  );
+  const nav = await data.get("Navigation", {
+    filter: {
+      app_id: [
+        {
+          type: "match",
+          value: window.app,
+        },
+      ],
+    },
+  });
   config.set("nav", nav.data);
 }

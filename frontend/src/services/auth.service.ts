@@ -21,12 +21,25 @@ export default {
         // 
         let response = await data.get(
             "User", 
-            `(x) => x._id == '${_id}' && x.password == hash('${password}')`,
             {
-                sensitive: {
-                    password: 1
-                }
-            }
+              filter: {
+                _id: [
+                  {
+                    type: "match",
+                    value: _id
+                  }
+                ],
+                password: [
+                  {
+                    type: "hash",
+                    value: password
+                  }
+                ]
+              },
+              sensitive: {
+                  password: 1
+              }
+          } 
         );
         if(response.data && response.data.length > 0) {
             sessionStorage.setItem("auth", JSON.stringify(response.data[0]));
