@@ -8,7 +8,7 @@ function search(params) {
   let db = connectDB();
   let sheet = db.getSheetByName(params.table);
 
-  // params - table, filter, page, size  
+  // params - table, filter, page, size
   if (sheet) {
     // retrieve data
     let data = sheet.getDataRange().getValues();
@@ -17,84 +17,86 @@ function search(params) {
     let headers = data[0];
 
     // convert to rows
-    for (let i = 1; i < data.length; i++) {      
+    for (let i = 1; i < data.length; i++) {
       // new row
       let row = { _ROW_: i + 1 };
 
       // convert to dictionary
-      for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];      
+      for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];
 
       // apply filter
       if (params.filter && !applyFilter(params.filter, row)) continue;
 
       // remove sensitive
-      if (params.sensitive) for (let key of Object.keys(params.sensitive)) delete row[key];
+      if (params.sensitive)
+        for (let key of Object.keys(params.sensitive)) delete row[key];
 
       //
       rows.push(row);
     }
-    
+
     // get total rows
     total = rows.length;
 
     // sort
-    if(params.sorts) {      
-      for(let sort of params.sorts) {        
+    if (params.sorts) {
+      for (let sort of params.sorts) {
         // key, dir
-        if(sort.dir == 1) {
-          rows.sort(
-            (a,b) => { 
-              return (a[sort.key] > b[sort.key]) ? 1 : ((b[sort.key] > a[sort.key]) ? -1 : 0); 
-            }
-          );
-        }
-        else if(sort.dir == -1) {
-          rows.sort(
-            (b,a) => { 
-              return (a[sort.key] > b[sort.key]) ? 1 : ((b[sort.key] > a[sort.key]) ? -1 : 0); 
-            }
-          )
+        if (sort.dir == 1) {
+          rows.sort((a, b) => {
+            return a[sort.key] > b[sort.key]
+              ? 1
+              : b[sort.key] > a[sort.key]
+              ? -1
+              : 0;
+          });
+        } else if (sort.dir == -1) {
+          rows.sort((b, a) => {
+            return a[sort.key] > b[sort.key]
+              ? 1
+              : b[sort.key] > a[sort.key]
+              ? -1
+              : 0;
+          });
         }
       }
     }
-
   }
 
   return {
     params,
-    total,    
+    total,
     data: rows,
   };
 }
 
-function applyFilter(config, row) {  
-
+function applyFilter(config, row) {
   // filter between columns will be "AND" condition
   let match = true;
-  for(let column of Object.keys(config)) {
+  for (let column of Object.keys(config)) {
     let filters = config[column];
 
     // filter on the same column is "OR" condition
     let matchFound = false;
-    for(let filter of filters) {
+    for (let filter of filters) {
       // exact match
-      if(filter.type == "match") {
-        if(row[column] == filter.value) {
+      if (filter.type == "match") {
+        if (row[column] == filter.value) {
           matchFound = true;
           break;
         }
       }
       // hash match
-      else if(filter.type == "hash") {
-        if(row[column] == hash(filter.value)) {
+      else if (filter.type == "hash") {
+        if (row[column] == hash(filter.value)) {
           matchFound = true;
           break;
         }
       }
 
       // not equal to
-      else if(filter.type == "neq") {
-        if(row[column] != filter.value) {
+      else if (filter.type == "neq") {
+        if (row[column] != filter.value) {
           matchFound = true;
           break;
         }
@@ -102,7 +104,7 @@ function applyFilter(config, row) {
     }
 
     // check if all columns found a match
-    if(!matchFound) {
+    if (!matchFound) {
       match = false;
       break;
     }
@@ -110,7 +112,6 @@ function applyFilter(config, row) {
 
   return match;
 }
-
 
 // Upsert
 function upsert(params) {
@@ -146,7 +147,8 @@ function upsert(params) {
           row.push(value);
 
           // update the cell
-          if (value != null) sheet.getRange(nextRow, parseInt(i) + 1).setValue(value);
+          if (value != null)
+            sheet.getRange(nextRow, parseInt(i) + 1).setValue(value);
         }
       } else {
         ///////////////////////
@@ -197,14 +199,14 @@ function connectDB() {
     // locate the sheets with the name
     var db = DriveApp.searchFiles(
       `parents in '${folder.getId()}' and mimeType = '${
-      MimeType.GOOGLE_SHEETS
+        MimeType.GOOGLE_SHEETS
       }' and title = 'DB'`
     );
     if (db.hasNext()) {
       db = db.next();
 
       // save to cache file id
-      cache.put("db", db.getId())
+      cache.put("db", db.getId());
 
       // Puts the value 'bar' into the cache using the key 'foo'
       return SpreadsheetApp.open(db);
