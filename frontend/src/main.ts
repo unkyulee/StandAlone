@@ -28,7 +28,7 @@ window.app_init = async () => {
   util.loadApp();
 
   // initialize function
-  await Promise.all([registerComponents(), loadAppConfig(), loadNav()]);
+  await Promise.all([registerComponents(), loadAppConfig(), loadNav(), loadConfig()]);
 
   // init view
   new Vue({
@@ -47,7 +47,7 @@ async function registerComponents() {
         {
           type: "match",
           value: window.app,
-        },        
+        },
       ],
     },
   });
@@ -57,9 +57,9 @@ async function registerComponents() {
       // retrieve component script part
       let component = eval(c.component);
       // default should be an object
-      if(!component) component = {};
+      if (!component) component = {};
       // assign template if exists
-      if(c.template) component = {...component, template: c.template};
+      if (c.template) component = { ...component, template: c.template };
       // register component
       Vue.component(c._id, component);
     } catch (ex) {
@@ -100,4 +100,19 @@ async function loadNav() {
     },
   });
   config.set("nav", nav.data);
+}
+
+async function loadConfig() {
+  // load navigation from data base
+  const nav = await data.get("Config", {
+    filter: {
+      app_id: [
+        {
+          type: "match",
+          value: window.app,
+        },
+      ],
+    },
+  });
+  config.set("config", nav.data[0]);
 }
