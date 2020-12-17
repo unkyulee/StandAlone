@@ -76,10 +76,10 @@ export default Vue.extend({
   methods: {
     async init() {
       // check toolbar
-      if (config.get("toolbar") != 0) this.toolbar = true;
+      if (config.get("toolbar")) this.toolbar = true;
 
       // check navigation
-      if (config.get("navigation") != 0) this.navigation = true;
+      if (config.get("navigation")) this.navigation = true;
 
       // load the first navigation
       if (this.$route.path != "/" && config.get("nav", []).length > 0) {

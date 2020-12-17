@@ -54,7 +54,14 @@ async function registerComponents() {
   for (let c of components.data) {
     // register the component
     try {
-      Vue.component(c._id, eval(c.component));
+      // retrieve component script part
+      let component = eval(c.component);
+      // default should be an object
+      if(!component) component = {};
+      // assign template if exists
+      if(c.template) component = {...component, template: c.template};
+      // register component
+      Vue.component(c._id, component);
     } catch (ex) {
       console.log(c);
       console.error(ex);

@@ -22,8 +22,9 @@ export default {
   },
 
   run(fn, params) {
-    return new Promise((res) =>
-      google.script.run.withSuccessHandler((data) => res(data))[fn](params)
+    return new Promise((ok) =>
+      google.script.run
+        .withSuccessHandler((data) => ok(data))[fn](params)
     );
   },
 };

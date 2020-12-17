@@ -22,7 +22,13 @@ function search(params) {
       let row = { _ROW_: i + 1 };
 
       // convert to dictionary
-      for (let j = 0; j < headers.length; j++) row[headers[j]] = data[i][j];
+      for (let j = 0; j < headers.length; j++) {
+        if(typeof data[i][j] == 'object') {
+          row[headers[j]] = JSON.stringify(data[i][j])
+        } else {
+          row[headers[j]] = data[i][j];
+        }         
+      }
 
       // apply filter
       if (params.filter && !applyFilter(params.filter, row)) continue;

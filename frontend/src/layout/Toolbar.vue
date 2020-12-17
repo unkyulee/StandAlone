@@ -1,14 +1,14 @@
 <template>
   <v-app-bar
-    app
-    dense
-    flat
+    app    
     :dark="toolbar.dark == 1 ? true : false"
     :color="toolbar.color"
   >
     <v-app-bar-nav-icon @click.stop="toggleDrawer()"></v-app-bar-nav-icon>
     <v-toolbar-title>{{ title }}</v-toolbar-title>
     <v-spacer></v-spacer>
+    <component v-for="(action, index) of actions" :is="action" :key="index">
+    </component>
   </v-app-bar>
 </template>
 
@@ -22,6 +22,7 @@ export default {
         color: null,
         dark: false,
       },
+      actions: [],
     };
   },
   mounted: function () {
@@ -29,6 +30,13 @@ export default {
     this.title = this.config.get("name", "");
     this.toolbar.dark = this.config.get("dark", false);
     this.toolbar.color = this.config.get("color");
+
+    // actions
+    if(this.config.get("actions")) {
+      try {
+        this.actions = JSON.parse(this.config.get("actions", []));
+      } catch {}
+    }
   },
   watch: {
     // react to route changes...
@@ -37,7 +45,7 @@ export default {
       const nav = this.config.get("nav", []);
       const matchingNav = nav.find((x) => x.url == to.path);
       // udpate ui
-      if (matchingNav) this.title = matchingNav.name;      
+      if (matchingNav) this.title = matchingNav.name;
     },
   },
   methods: {
