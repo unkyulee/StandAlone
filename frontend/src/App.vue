@@ -32,7 +32,7 @@ export default Vue.extend({
   components: {
     Toolbar,
     Navigation,
-    Snackbar
+    Snackbar,
   },
   provide: function () {
     return {
@@ -81,21 +81,22 @@ export default Vue.extend({
       // check navigation
       if (config.get("navigation")) this.navigation = true;
 
-      // load the first navigation
-      if (this.$route.path != "/" && config.get("nav", []).length > 0) {
-        this.$router.push(config.get("nav.0.url"));
-      }
-      // other-wise load the selected navigation
-      else {
-        await this.load(this.$route.path);
-      }
+      // go to given navigation      
+      this.$router
+        .push(util.get(window, "params.parameter.url", config.get("nav.0.url")))
+        .catch(async (error) => {          
+          if (error.name == "NavigationDuplicated") {
+            await this.load(this.$route.path);
+          }
+        });
     },
     load(url) {
       // find the matching nav
       const nav = config.get("nav", []);
       const matchingNav = nav.find((x) => x.url == url);
+      
       // udpate ui
-      if (matchingNav) this.component = matchingNav.component;      
+      if (matchingNav) this.component = matchingNav.component;
     },
   },
 });
