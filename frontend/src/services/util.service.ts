@@ -2,6 +2,7 @@ import moment from "moment";
 import obj from "object-path";
 
 declare var window: any;
+declare var eruda: any;
 
 export default {
   safeStr(str) {
@@ -12,6 +13,18 @@ export default {
     window.app = this.safeStr(window.app);
     if (!window.app) window.app = "default";
     console.log(window.app);
+
+    // check debug
+    if (obj.get(window.params, "parameter.debug")) {
+      (function () {
+        var script = document.createElement("script");
+        script.src = "//cdn.jsdelivr.net/npm/eruda";
+        document.body.appendChild(script);
+        script.onload = function () {
+          eruda.init();
+        };
+      })();
+    }
   },
   generateId() {
     return parseInt(`${(new Date().getTime() / 100) % 10000000}`);
@@ -23,7 +36,7 @@ export default {
     return obj.set(data, path, value);
   },
   moment(d) {
-    return moment(d)
+    return moment(d);
   },
   resizeImage(file, maxSize) {
     let reader = new FileReader();
@@ -31,15 +44,16 @@ export default {
     let canvas = document.createElement("canvas");
 
     const dataURItoBlob = (dataURI) => {
-      const bytes = dataURI.split(',')[0].indexOf('base64') >= 0
-        ? atob(dataURI.split(',')[1])
-        : unescape(dataURI.split(',')[1]);
-      const mime = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      const bytes =
+        dataURI.split(",")[0].indexOf("base64") >= 0
+          ? atob(dataURI.split(",")[1])
+          : unescape(dataURI.split(",")[1]);
+      const mime = dataURI.split(",")[0].split(":")[1].split(";")[0];
       const max = bytes.length;
       const ia = new Uint8Array(max);
       for (let i = 0; i < max; i += 1) ia[i] = bytes.charCodeAt(i);
       return new Blob([ia], { type: mime });
-    };    
+    };
 
     const resize = () => {
       let { width, height } = image;

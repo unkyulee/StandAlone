@@ -24,6 +24,7 @@ new Vue({
 
 // init function
 window.app_init = async () => {
+  
   // retrieve app_id
   util.loadApp();
 
