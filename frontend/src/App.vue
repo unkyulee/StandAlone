@@ -101,3 +101,13 @@ export default Vue.extend({
 });
 </script>
 
+<style scoped>
+/deep/ .v-main__wrap {
+  display: flex;
+  flex-flow: column;
+}
+
+/deep/ p {
+  margin-bottom: 0 !important;
+}
+</style>

@@ -1,3 +1,4 @@
+import moment from "moment";
 import obj from "object-path";
 
 declare var window: any;
@@ -21,7 +22,9 @@ export default {
   set(data, path, value) {
     return obj.set(data, path, value);
   },
-
+  moment(d) {
+    return moment(d)
+  },
   resizeImage(file, maxSize) {
     let reader = new FileReader();
     let image: any = new Image();
