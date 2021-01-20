@@ -23,11 +23,11 @@ function search(params) {
 
       // convert to dictionary
       for (let j = 0; j < headers.length; j++) {
-        if(typeof data[i][j] == 'object') {
-          row[headers[j]] = JSON.stringify(data[i][j])
+        if (typeof data[i][j] == "object") {
+          row[headers[j]] = JSON.stringify(data[i][j]);
         } else {
           row[headers[j]] = data[i][j];
-        }         
+        }
       }
 
       // apply filter
@@ -92,6 +92,17 @@ function applyFilter(config, row) {
           break;
         }
       }
+
+      // contains
+      else if (filter.type == "contains") {
+        try {
+          if (row[column].includes(filter.value)) {
+            matchFound = true;
+            break;
+          }
+        } catch(ex) {}
+      }
+
       // hash match
       else if (filter.type == "hash") {
         if (row[column] == hash(filter.value)) {
