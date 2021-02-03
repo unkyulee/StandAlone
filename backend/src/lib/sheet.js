@@ -96,11 +96,13 @@ function applyFilter(config, row) {
       // contains
       else if (filter.type == "contains") {
         try {
-          if (row[column].includes(filter.value)) {
+          if (String(row[column]).toLowerCase().includes(filter.value.toLowerCase())) {
             matchFound = true;
             break;
           }
-        } catch(ex) {}
+        } catch(ex) {
+          Logger.log(ex)
+        }
       }
 
       // hash match
