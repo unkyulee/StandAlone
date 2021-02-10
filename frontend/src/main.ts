@@ -4,6 +4,7 @@ import Loading from "./layout/Loading.vue";
 import App from "./App.vue";
 import "./style.css";
 declare var window: any;
+import moment from "moment";
 
 // Router plugin
 import VueRouter from "vue-router";
@@ -85,6 +86,11 @@ async function loadAppConfig() {
   if (app && app.data && app.data.length > 0) {
     app = app.data[0];
     for (let key of Object.keys(app)) config.set(key, app[key]);
+
+    // set locale
+    if(config.get("locale")) {
+      moment.locale(config.get("locale"))
+    }
   }
 }
 
